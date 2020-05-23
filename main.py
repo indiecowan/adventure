@@ -1,0 +1,152 @@
+"""
+FILENAME: main.py
+-------------------
+run around on a map
+"""
+
+import tkinter
+import time
+import math
+from tkinter import *
+from PIL import ImageTk, Image
+import os
+
+CANVAS_WIDTH = 700      # Width of drawing canvas in pixels
+CANVAS_HEIGHT = 700    # Height of drawing canvas in pixels
+CANVAS_MIDDLE_X = CANVAS_WIDTH/2
+CANVAS_MIDDLE_Y = CANVAS_HEIGHT/2
+PERSON_WIDTH = 75
+MAP_WIDTH = 4000
+
+
+def main():
+    # MAKE CANVAS
+    canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'adventure')
+    # MAKE BACKGROUND
+    my_map = canvas.create_rectangle(CANVAS_MIDDLE_X + MAP_WIDTH/2, CANVAS_MIDDLE_Y + MAP_WIDTH/2,
+                                     CANVAS_MIDDLE_X - MAP_WIDTH/2, CANVAS_MIDDLE_Y - MAP_WIDTH/2, fill="coral",
+                                     activefill="coral2", stipple="grid")
+    # MAKE PERSON
+    person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
+    # TODO:
+    # what is the border of background?
+    print(canvas.bbox(my_map))
+
+    ##### TRYING TO CAPTURE KEYBOARD CLICKS #####
+    y_direction = 0
+    x_direction = 0
+
+
+
+    def callback(event):
+        canvas.focus_set()
+        print("clicked at " + str(event.x) + " " + str(event.y))
+
+    def pressed_w(event):
+        print("pressed w")
+        nonlocal y_direction
+        nonlocal x_direction
+        if y_direction == -1: y_direction = 0
+        else:
+            y_direction = -1
+            x_direction = 0
+        print(x_direction, y_direction)
+        canvas.move(person, 0, -10)
+
+
+    def pressed_a(event):
+        print("pressed a")
+        nonlocal y_direction
+        nonlocal x_direction
+        if x_direction == -1:
+            x_direction = 0
+        else:
+            x_direction = -1
+            y_direction = 0
+        print(x_direction, y_direction)
+        canvas.move(person, -10, 0)
+
+    def pressed_s(event):
+        print("pressed s")
+        nonlocal y_direction
+        nonlocal x_direction
+        if y_direction == 1:
+            y_direction = 0
+        else:
+            y_direction = 1
+            x_direction = 0
+        print(x_direction, y_direction)
+        canvas.move(person, 0, 10)
+
+    def pressed_d(event):
+        print("pressed d")
+        nonlocal y_direction
+        nonlocal x_direction
+        if x_direction == 1:
+            x_direction = 0
+        else:
+            x_direction = 1
+            y_direction = 0
+        print(x_direction, y_direction)
+        canvas.move(person, 10, 0)
+
+
+    canvas.bind("<Button-1>", callback)
+
+    canvas.bind("w", pressed_w)
+    canvas.bind("a", pressed_a)
+    canvas.bind("s", pressed_s)
+    canvas.bind("d", pressed_d)
+    canvas.pack()
+    # canvas.after(20, drawFrame, canvas, y_direction, x_direction)
+
+    canvas.mainloop()
+
+    while True:
+        print(y_direction)
+        canvas.update()
+        time.sleep(1/50)
+
+
+def make_person(canvas, x, y):
+    return canvas.create_oval(x + PERSON_WIDTH/2, y + PERSON_WIDTH/2, x - PERSON_WIDTH/2, y - PERSON_WIDTH/2, fill="red")
+
+
+"""
+ATTEMPT TO USE IMAGE:::
+map_file = ImageTk.PhotoImage(Image.open("images/IMG_7550.jpg"))
+my_map = canvas.create_image((CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y), image=map_file, state="normal")
+"""
+
+
+
+# doesnt work
+"""
+def make_map(canvas, x, y):
+    map_file = ImageTk.PhotoImage(Image.open("IMG_7550.jpg"))
+    return canvas.create_image((x,y), image=map_file, state="normal")
+"""
+
+######## DO NOT MODIFY ANY CODE BELOW THIS LINE ###########
+
+
+# This function is provided to you and should not be modified.
+# It creates a window that contains a drawing canvas that you
+# will use to make your drawings.
+def make_canvas(width, height, title):
+    """
+    DO NOT MODIFY
+    Creates and returns a drawing canvas
+    of the given int size with a blue border,
+    ready for drawing.
+    """
+    top = tkinter.Tk()
+    top.minsize(width=width, height=height)
+    top.title(title)
+    canvas = tkinter.Canvas(top, width=width + 1, height=height + 1)
+    canvas.pack()
+    return canvas
+
+
+if __name__ == '__main__':
+    main()
