@@ -18,14 +18,16 @@ CANVAS_MIDDLE_Y = CANVAS_HEIGHT/2
 PERSON_WIDTH = 75
 MAP_WIDTH = 4000
 MOVEMENT_VARIABLE = 5
-IMAGE = "images/sunflower.png"
+IMAGE_FILE_NAME = "images/grass.jpeg"
 
 
 def main():
     # MAKE CANVAS
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'adventure')
     # MAKE BACKGROUND
-    my_map = canvas.create_image(0, 0, image=Image.open(IMAGE, "r"))
+    image = Image.open(IMAGE_FILE_NAME)
+    photo = ImageTk.PhotoImage(image)
+    my_map = canvas.create_image(0, 0, image=photo, anchor=NW)
     # MAKE PERSON
     person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
     # TODO:
