@@ -26,11 +26,11 @@ def main():
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'adventure')
     # MAKE BACKGROUND
     image = Image.open(IMAGE_FILE_NAME)
+    image = image.resize((MAP_WIDTH, MAP_WIDTH), Image.ANTIALIAS)
     photo = ImageTk.PhotoImage(image)
     my_map = canvas.create_image(0, 0, image=photo, anchor=NW)
     # MAKE PERSON
     person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
-    # TODO:
     # what is the border of background?
     print(canvas.bbox(my_map))
 
@@ -56,7 +56,6 @@ def main():
             x_direction = 0
         print(x_direction, y_direction)
         # canvas.move(person, 0, -10)
-
 
     def pressed_a(event):
         print("pressed a")
@@ -113,6 +112,7 @@ def make_person(canvas, x, y):
 
 
 def draw_frame(canvas, person, x_direction, y_direction):
+    # TODO: move map when walk too close to edge
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
     canvas.update()
 
