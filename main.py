@@ -11,21 +11,21 @@ from tkinter import *
 from PIL import ImageTk, Image
 import os
 
-CANVAS_WIDTH = 700      # Width of drawing canvas in pixels
-CANVAS_HEIGHT = 700    # Height of drawing canvas in pixels
+CANVAS_WIDTH = 1400      # Width of drawing canvas in pixels
+CANVAS_HEIGHT = 800    # Height of drawing canvas in pixels
 CANVAS_MIDDLE_X = CANVAS_WIDTH/2
 CANVAS_MIDDLE_Y = CANVAS_HEIGHT/2
 PERSON_WIDTH = 75
 MAP_WIDTH = 4000
+MOVEMENT_VARIABLE = 5
+IMAGE = "images/sunflower.png"
 
 
 def main():
     # MAKE CANVAS
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'adventure')
     # MAKE BACKGROUND
-    my_map = canvas.create_rectangle(CANVAS_MIDDLE_X + MAP_WIDTH/2, CANVAS_MIDDLE_Y + MAP_WIDTH/2,
-                                     CANVAS_MIDDLE_X - MAP_WIDTH/2, CANVAS_MIDDLE_Y - MAP_WIDTH/2, fill="coral",
-                                     activefill="coral2", stipple="grid")
+    my_map = canvas.create_image(0, 0, image=Image.open(IMAGE, "r"))
     # MAKE PERSON
     person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
     # TODO:
@@ -39,8 +39,10 @@ def main():
 
 
     def callback(event):
+        nonlocal canvas
         canvas.focus_set()
         print("clicked at " + str(event.x) + " " + str(event.y))
+        # print("window dimensions are " + canvas.coords())
 
     def pressed_w(event):
         print("pressed w")
@@ -109,8 +111,7 @@ def make_person(canvas, x, y):
 
 
 def draw_frame(canvas, person, x_direction, y_direction):
-    canvas.move(person, 10 * x_direction, 10 * y_direction)
-    print("test")
+    canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
     canvas.update()
 
 
