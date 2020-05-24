@@ -18,6 +18,7 @@ CANVAS_MIDDLE_Y = CANVAS_HEIGHT/2
 PERSON_WIDTH = 75
 MAP_WIDTH = 4000
 MOVEMENT_VARIABLE = 5
+BORDER_PROX_LIMIT = 300
 IMAGE_FILE_NAME = "images/grass.jpeg"
 
 
@@ -103,7 +104,7 @@ def main():
     canvas.pack()
 
     while True:
-        draw_frame(canvas, person, x_direction, y_direction)
+        draw_frame(canvas, person, my_map, x_direction, y_direction)
         time.sleep(1/50)
 
 
@@ -111,10 +112,23 @@ def make_person(canvas, x, y):
     return canvas.create_oval(x + PERSON_WIDTH/2, y + PERSON_WIDTH/2, x - PERSON_WIDTH/2, y - PERSON_WIDTH/2, fill="red")
 
 
-def draw_frame(canvas, person, x_direction, y_direction):
-    # TODO: move map when walk too close to edge
+def draw_frame(canvas, person, my_map, x_direction, y_direction):
+    # TODO: stop person at border of image
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
+    if is_person_on_edge(canvas, person):
+        canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
+    else:
+        canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+        canvas.move(my_map, MOVEMENT_VARIABLE * 2 * -x_direction, MOVEMENT_VARIABLE * 2 * -y_direction)
     canvas.update()
+
+
+def is_person_on_edge(canvas, person):
+    if canvas.coords(person)[0] > BORDER_PROX_LIMIT and canvas.coords(person)[1] > BORDER_PROX_LIMIT and canvas.coords(person)[
+        2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.coords(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
+        return True
+    return False
+
 
 
 ######## DO NOT MODIFY ANY CODE BELOW THIS LINE ###########
