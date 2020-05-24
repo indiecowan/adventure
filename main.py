@@ -33,8 +33,8 @@ def main():
     print(canvas.bbox(my_map))
 
     ##### TRYING TO CAPTURE KEYBOARD CLICKS #####
-    y_direction = 0
     x_direction = 0
+    y_direction = 0
 
 
 
@@ -51,7 +51,7 @@ def main():
             y_direction = -1
             x_direction = 0
         print(x_direction, y_direction)
-        canvas.move(person, 0, -10)
+        # canvas.move(person, 0, -10)
 
 
     def pressed_a(event):
@@ -64,7 +64,7 @@ def main():
             x_direction = -1
             y_direction = 0
         print(x_direction, y_direction)
-        canvas.move(person, -10, 0)
+        # canvas.move(person, -10, 0)
 
     def pressed_s(event):
         print("pressed s")
@@ -76,7 +76,7 @@ def main():
             y_direction = 1
             x_direction = 0
         print(x_direction, y_direction)
-        canvas.move(person, 0, 10)
+        # canvas.move(person, 0, 10)
 
     def pressed_d(event):
         print("pressed d")
@@ -88,7 +88,7 @@ def main():
             x_direction = 1
             y_direction = 0
         print(x_direction, y_direction)
-        canvas.move(person, 10, 0)
+        # canvas.move(person, 10, 0)
 
 
     canvas.bind("<Button-1>", callback)
@@ -98,13 +98,9 @@ def main():
     canvas.bind("s", pressed_s)
     canvas.bind("d", pressed_d)
     canvas.pack()
-    # canvas.after(20, drawFrame, canvas, y_direction, x_direction)
-
-    canvas.mainloop()
 
     while True:
-        print(y_direction)
-        canvas.update()
+        draw_frame(canvas, person, x_direction, y_direction)
         time.sleep(1/50)
 
 
@@ -112,20 +108,11 @@ def make_person(canvas, x, y):
     return canvas.create_oval(x + PERSON_WIDTH/2, y + PERSON_WIDTH/2, x - PERSON_WIDTH/2, y - PERSON_WIDTH/2, fill="red")
 
 
-"""
-ATTEMPT TO USE IMAGE:::
-map_file = ImageTk.PhotoImage(Image.open("images/IMG_7550.jpg"))
-my_map = canvas.create_image((CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y), image=map_file, state="normal")
-"""
+def draw_frame(canvas, person, x_direction, y_direction):
+    canvas.move(person, 10 * x_direction, 10 * y_direction)
+    print("test")
+    canvas.update()
 
-
-
-# doesnt work
-"""
-def make_map(canvas, x, y):
-    map_file = ImageTk.PhotoImage(Image.open("IMG_7550.jpg"))
-    return canvas.create_image((x,y), image=map_file, state="normal")
-"""
 
 ######## DO NOT MODIFY ANY CODE BELOW THIS LINE ###########
 
