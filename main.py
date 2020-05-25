@@ -17,7 +17,7 @@ CANVAS_MIDDLE_X = CANVAS_WIDTH/2
 CANVAS_MIDDLE_Y = CANVAS_HEIGHT/2
 PERSON_WIDTH = 75
 MAP_WIDTH = 4000
-MOVEMENT_VARIABLE = 5
+MOVEMENT_VARIABLE = 7
 BORDER_PROX_LIMIT = 300
 IMAGE_FILE_NAME = "images/grass.jpeg"
 
@@ -116,18 +116,22 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
     # TODO: stop person at border of image
     # to test if moving away from border prox limit
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
-    if is_person_in_middle(canvas, person):
-        print("person was not on edge")
-    elif person_crossing_prox_lim(canvas, person, x_direction, y_direction):
-        print("person crossing prox lim")
-        if map_can_keep_moving(canvas, my_map, x_direction, y_direction):
-            print("map can keep moving")
-            canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
-            canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
-        else: print("map cant keep moving")
+    if person_out_of_bounds(canvas, person, x_direction, y_direction):
+        print("person attempting to go out of bounds")
+        canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     else:
-        print("person exiting border prox lim")
-        # canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+        if is_person_in_middle(canvas, person):
+            print("person was not on edge")
+        elif person_crossing_prox_lim(canvas, person, x_direction, y_direction):
+            print("person crossing prox lim")
+            if map_can_keep_moving(canvas, my_map, x_direction, y_direction):
+                print("map can keep moving")
+                canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+                canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+            else: print("map cant keep moving")
+        else:
+            print("person exiting border prox lim")
+            # canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     canvas.update()
 
 
@@ -178,6 +182,15 @@ def person_crossing_prox_lim(canvas, person, x_direction, y_direction):
         if canvas.bbox(person)[3] > CANVAS_HEIGHT - BORDER_PROX_LIMIT:
             result = True
     return result
+
+
+def person_out_of_bounds(canvas, person, x_direction, y_direction):
+    # says if person is out of bounds
+    result = False
+    if canvas.bbox(person)[0] < 0 or canvas.bbox(person)[1] < 0 or canvas.bbox(person)[2] > CANVAS_WIDTH or canvas.bbox(person)[3] > CANVAS_HEIGHT:
+        result = True
+    return result
+
 
 
 ######## DO NOT MODIFY ANY CODE BELOW THIS LINE ###########
