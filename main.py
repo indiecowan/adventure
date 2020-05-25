@@ -129,32 +129,21 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
 
 
 def is_person_in_middle(canvas, person):
+    # returns true if person is in the middle, not inside any border prox limits
     # TODO: split x and y border limits,
+    result = False
     if canvas.coords(person)[0] > BORDER_PROX_LIMIT and canvas.coords(person)[1] > BORDER_PROX_LIMIT and canvas.coords(person)[
         2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.coords(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
-        return True
-    return False
+        result = True
+    return result
 
 
 # BUGGY
 def map_can_keep_moving(canvas, my_map, x_direction, y_direction):
+    # returns true if map still has pixels to show in direction person trying to go in
     #TODO: break loop, let direction determine of map moves or not
     # print(canvas.bbox(my_map))
     result = False
-    """
-    if canvas.bbox(my_map)[0] > 0:
-        canvas.move(my_map, -MOVEMENT_VARIABLE, 0)
-    if canvas.bbox(my_map)[1] > 0:
-        canvas.bbox(my_map, canvas.bbox(my_map)[0], 0, canvas.bbox(my_map)[2], canvas.bbox(my_map)[3])
-    if canvas.bbox(my_map)[2] < CANVAS_WIDTH:
-        canvas.bbox(my_map, canvas.bbox(my_map)[0], canvas.bbox(my_map)[1], CANVAS_WIDTH, canvas.bbox(my_map)[3])
-    if canvas.bbox(my_map)[3] < CANVAS_HEIGHT:
-        canvas.bbox(my_map, canvas.bbox(my_map)[0], canvas.bbox(my_map)[1], canvas.bbox(my_map)[2], CANVAS_HEIGHT)
-    """
-    """
-    if canvas.bbox(my_map)[0] < 0 and canvas.bbox(my_map)[1] < 0 and canvas.bbox(my_map)[2] > CANVAS_WIDTH and canvas.bbox(my_map)[3] > CANVAS_HEIGHT:
-        result = False
-    """
     if x_direction == -1:
         if canvas.bbox(my_map)[0] > 0:
             result = True
@@ -166,6 +155,24 @@ def map_can_keep_moving(canvas, my_map, x_direction, y_direction):
             result = True
     elif y_direction == 1:
         if canvas.bbox(my_map)[3] > CANVAS_HEIGHT:
+            result = True
+    return result
+
+
+def person_crossing_prox_lim(canvas, person, x_direction, y_direction):
+    # returns true if person has crossed the limit in the direction theyve decided to go in
+    result = False
+    if x_direction == -1:
+        if canvas.bbox(person)[0] <= BORDER_PROX_LIMIT:
+            result = True
+    elif y_direction == -1:
+        if canvas.bbox(person)[1] <= BORDER_PROX_LIMIT:
+            result = True
+    elif x_direction == 1:
+        if canvas.bbox(person)[2] >= CANVAS_WIDTH - BORDER_PROX_LIMIT:
+            result = True
+    elif y_direction == 1:
+        if canvas.bbox(my_map)[3] > CANVAS_HEIGHT - BORDER_PROX_LIMIT:
             result = True
     return result
 
