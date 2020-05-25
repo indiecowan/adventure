@@ -24,6 +24,8 @@ MAP_IMAGE_FILE_NAME = "images/narnia.jpg"
 STANDING_IMAGE_FILE_NAME = "images/person_standing.png"
 LEFT_IMAGE_FILE_NAME = "images/person_skating_left.png"
 RIGHT_IMAGE_FILE_NAME = "images/person_skating_right.png"
+UP_IMAGE_FILE_NAME = "images/person_skating_up.png"
+DOWN_IMAGE_FILE_NAME = "images/person_skating_down.png"
 
 
 def main():
@@ -43,14 +45,16 @@ def main():
     left_image = left_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
     right_image = Image.open(RIGHT_IMAGE_FILE_NAME)
     right_image = right_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
+    up_image = Image.open(UP_IMAGE_FILE_NAME)
+    up_image = up_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
+    down_image = Image.open(DOWN_IMAGE_FILE_NAME)
+    down_image = down_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
     standing_photo = ImageTk.PhotoImage(standing_image)
     left_photo = ImageTk.PhotoImage(left_image)
     right_photo = ImageTk.PhotoImage(right_image)
-    standing_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=standing_photo, anchor=CENTER, state=NORMAL)
-    left_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=left_photo, anchor=CENTER, state=HIDDEN)
-    right_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=right_photo, anchor=CENTER, state=HIDDEN)
-
-    person = standing_person
+    up_photo = ImageTk.PhotoImage(up_image)
+    down_photo = ImageTk.PhotoImage(down_image)
+    person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=standing_photo, anchor=CENTER, state=NORMAL)
 
 
     # what is the border of background?
@@ -120,7 +124,7 @@ def main():
     canvas.pack()
 
     while True:
-        draw_frame(canvas, my_map, person, standing_person, left_person, right_person, x_direction, y_direction)
+        draw_frame(canvas, my_map, person, standing_photo, left_photo, right_photo, up_photo, down_photo, x_direction, y_direction)
         time.sleep(1/50)
 
 
@@ -139,10 +143,9 @@ def make_person(canvas, x, y):
 """
 
 
-def draw_frame(canvas, my_map, person, standing_person, left_person, right_person, x_direction, y_direction):
-    # TODO: stop person at border of image
+def draw_frame(canvas, my_map, person, standing_photo, left_photo, right_photo, up_photo, down_photo, x_direction, y_direction):
     # to test if moving away from border prox limit
-    # person = update_person(standing_person, left_person, right_person, x_direction, y_direction)
+    update_person(canvas, person, standing_photo, left_photo, right_photo, up_photo, down_photo, x_direction, y_direction)
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
     if person_out_of_bounds(canvas, person, x_direction, y_direction):
         print("person attempting to go out of bounds")
@@ -165,7 +168,6 @@ def draw_frame(canvas, my_map, person, standing_person, left_person, right_perso
 
 def is_person_in_middle(canvas, person):
     # returns true if person is in the middle, not inside any border prox limits
-    # TODO: split x and y border limits,
     print(canvas.bbox(person))
     result = False
     if canvas.bbox(person)[0] > BORDER_PROX_LIMIT and canvas.bbox(person)[1] > BORDER_PROX_LIMIT and canvas.bbox(person)[
@@ -177,7 +179,6 @@ def is_person_in_middle(canvas, person):
 # BUGGY
 def map_can_keep_moving(canvas, my_map, x_direction, y_direction):
     # returns true if map still has pixels to show in direction person trying to go in
-    #TODO: break loop, let direction determine of map moves or not
     # print(canvas.bbox(my_map))
     result = False
     if x_direction == -1:
@@ -221,16 +222,19 @@ def person_out_of_bounds(canvas, person, x_direction, y_direction):
     return result
 
 
-"""
-def update_person(standing_person, left_person, right_person, x_direction, y_direction):
+def update_person(canvas, person, standing_photo, left_photo, right_photo, up_photo, down_photo, x_direction, y_direction):
+    # configures direction look of person
     if x_direction == -1:
-        result = left_person
+        canvas.itemconfig(person, image=left_photo)
     elif x_direction == 1:
-        result = right_person
+        canvas.itemconfig(person, image=right_photo)
+    elif y_direction == -1:
+        canvas.itemconfig(person, image=up_photo)
+    elif y_direction == 1:
+        canvas.itemconfig(person, image=down_photo)
     else:
-        result = standing_person
-    return result
-"""
+        canvas.itemconfig(person, image=standing_photo)
+
 
 
 
