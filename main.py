@@ -119,7 +119,8 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
     if is_person_on_edge(canvas, person) == False:
         print("person was not on edge")
     # map_in_frame(canvas, my_map, x_direction, y_direction)
-    elif map_in_frame(canvas, my_map, x_direction, y_direction):
+    elif map_on_edge(canvas, my_map, x_direction, y_direction) == False:
+        print("map on edge")
         canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
         canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     else:
@@ -134,16 +135,24 @@ def is_person_on_edge(canvas, person):
         return False
     return True
 
-# BUGGY
-def map_in_frame(canvas, my_map, x_direction, y_direction):
-    print(canvas.coords(my_map))
-    print(canvas.bbox(my_map))
-    result = False
-    # and canvas.coords(my_map)[2] > CANVAS_WIDTH and canvas.coords(my_map)[3] > CANVAS_HEIGHT
-    if canvas.bbox(my_map)[0] <= 0 and canvas.bbox(my_map)[1] <= 0 and canvas.bbox(my_map)[2] >= CANVAS_WIDTH and canvas.bbox(my_map)[3] >= CANVAS_HEIGHT:
-        result = True
-    return result
 
+# BUGGY
+def map_on_edge(canvas, my_map, x_direction, y_direction):
+    print(canvas.bbox(my_map))
+    result = True
+    """
+    if canvas.bbox(my_map)[0] > 0:
+        canvas.move(my_map, -MOVEMENT_VARIABLE, 0)
+    if canvas.bbox(my_map)[1] > 0:
+        canvas.bbox(my_map, canvas.bbox(my_map)[0], 0, canvas.bbox(my_map)[2], canvas.bbox(my_map)[3])
+    if canvas.bbox(my_map)[2] < CANVAS_WIDTH:
+        canvas.bbox(my_map, canvas.bbox(my_map)[0], canvas.bbox(my_map)[1], CANVAS_WIDTH, canvas.bbox(my_map)[3])
+    if canvas.bbox(my_map)[3] < CANVAS_HEIGHT:
+        canvas.bbox(my_map, canvas.bbox(my_map)[0], canvas.bbox(my_map)[1], canvas.bbox(my_map)[2], CANVAS_HEIGHT)
+    """
+    if canvas.bbox(my_map)[0] < 0 and canvas.bbox(my_map)[1] < 0 and canvas.bbox(my_map)[2] > CANVAS_WIDTH and canvas.bbox(my_map)[3] > CANVAS_HEIGHT:
+        result = False
+    return result
 
 
 ######## DO NOT MODIFY ANY CODE BELOW THIS LINE ###########
