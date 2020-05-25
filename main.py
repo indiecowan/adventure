@@ -29,7 +29,7 @@ def main():
     image = Image.open(IMAGE_FILE_NAME)
     image = image.resize((MAP_WIDTH, MAP_WIDTH), Image.ANTIALIAS)
     photo = ImageTk.PhotoImage(image)
-    my_map = canvas.create_image(0, 0, image=photo, anchor=NW)
+    my_map = canvas.create_image(CANVAS_HEIGHT/2, CANVAS_WIDTH/2, image=photo, anchor=CENTER)
     # MAKE PERSON
     person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
     # what is the border of background?
@@ -45,7 +45,7 @@ def main():
         nonlocal canvas
         canvas.focus_set()
         print("clicked at " + str(event.x) + " " + str(event.y))
-        # print("window dimensions are " + canvas.coords())
+        print("map bbox = " + str(canvas.bbox(my_map)), "map coords = " + str(canvas.coords(my_map)))
 
     def pressed_w(event):
         print("pressed w")
@@ -114,20 +114,35 @@ def make_person(canvas, x, y):
 
 def draw_frame(canvas, person, my_map, x_direction, y_direction):
     # TODO: stop person at border of image
+    # to test if moving away from border prox limit
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
-    if is_person_on_edge(canvas, person):
-        canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
-    else:
+    if is_person_on_edge(canvas, person) == False:
+        print("person was not on edge")
+    # map_in_frame(canvas, my_map, x_direction, y_direction)
+    elif map_in_frame(canvas, my_map, x_direction, y_direction):
         canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
-        canvas.move(my_map, MOVEMENT_VARIABLE * 2 * -x_direction, MOVEMENT_VARIABLE * 2 * -y_direction)
+        canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+    else:
+        print("else")
+        # canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     canvas.update()
 
 
 def is_person_on_edge(canvas, person):
     if canvas.coords(person)[0] > BORDER_PROX_LIMIT and canvas.coords(person)[1] > BORDER_PROX_LIMIT and canvas.coords(person)[
         2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.coords(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
-        return True
-    return False
+        return False
+    return True
+
+# BUGGY
+def map_in_frame(canvas, my_map, x_direction, y_direction):
+    print(canvas.coords(my_map))
+    print(canvas.bbox(my_map))
+    result = False
+    # and canvas.coords(my_map)[2] > CANVAS_WIDTH and canvas.coords(my_map)[3] > CANVAS_HEIGHT
+    if canvas.bbox(my_map)[0] <= 0 and canvas.bbox(my_map)[1] <= 0 and canvas.bbox(my_map)[2] >= CANVAS_WIDTH and canvas.bbox(my_map)[3] >= CANVAS_HEIGHT:
+        result = True
+    return result
 
 
 
