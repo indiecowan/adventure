@@ -19,19 +19,40 @@ PERSON_WIDTH = 75
 MAP_WIDTH = 4000
 MOVEMENT_VARIABLE = 7
 BORDER_PROX_LIMIT = 300
-IMAGE_FILE_NAME = "images/grass.jpeg"
+
+MAP_IMAGE_FILE_NAME = "images/narnia.jpg"
+STANDING_IMAGE_FILE_NAME = "images/person_standing.png"
+LEFT_IMAGE_FILE_NAME = "images/person_skating_left.png"
+RIGHT_IMAGE_FILE_NAME = "images/person_skating_right.png"
 
 
 def main():
     # MAKE CANVAS
     canvas = make_canvas(CANVAS_WIDTH, CANVAS_HEIGHT, 'adventure')
+
     # MAKE BACKGROUND
-    image = Image.open(IMAGE_FILE_NAME)
-    image = image.resize((MAP_WIDTH, MAP_WIDTH), Image.ANTIALIAS)
-    photo = ImageTk.PhotoImage(image)
-    my_map = canvas.create_image(CANVAS_HEIGHT/2, CANVAS_WIDTH/2, image=photo, anchor=CENTER)
+    map_image = Image.open(MAP_IMAGE_FILE_NAME)
+    map_image = map_image.resize((MAP_WIDTH, MAP_WIDTH), Image.ANTIALIAS)
+    map_photo = ImageTk.PhotoImage(map_image)
+    my_map = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=map_photo, anchor=CENTER, state=NORMAL)
+
     # MAKE PERSON
-    person = make_person(canvas, CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y)
+    standing_image = Image.open(STANDING_IMAGE_FILE_NAME)
+    standing_image = standing_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
+    left_image = Image.open(LEFT_IMAGE_FILE_NAME)
+    left_image = left_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
+    right_image = Image.open(RIGHT_IMAGE_FILE_NAME)
+    right_image = right_image.resize((PERSON_WIDTH, PERSON_WIDTH), Image.ANTIALIAS)
+    standing_photo = ImageTk.PhotoImage(standing_image)
+    left_photo = ImageTk.PhotoImage(left_image)
+    right_photo = ImageTk.PhotoImage(right_image)
+    standing_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=standing_photo, anchor=CENTER, state=NORMAL)
+    left_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=left_photo, anchor=CENTER, state=HIDDEN)
+    right_person = canvas.create_image(CANVAS_MIDDLE_X, CANVAS_MIDDLE_Y, image=right_photo, anchor=CENTER, state=HIDDEN)
+
+    person = standing_person
+
+
     # what is the border of background?
     print(canvas.bbox(my_map))
 
@@ -56,7 +77,6 @@ def main():
             y_direction = -1
             x_direction = 0
         print(x_direction, y_direction)
-        # canvas.move(person, 0, -10)
 
     def pressed_a(event):
         print("pressed a")
@@ -68,7 +88,6 @@ def main():
             x_direction = -1
             y_direction = 0
         print(x_direction, y_direction)
-        # canvas.move(person, -10, 0)
 
     def pressed_s(event):
         print("pressed s")
@@ -80,7 +99,6 @@ def main():
             y_direction = 1
             x_direction = 0
         print(x_direction, y_direction)
-        # canvas.move(person, 0, 10)
 
     def pressed_d(event):
         print("pressed d")
@@ -92,8 +110,6 @@ def main():
             x_direction = 1
             y_direction = 0
         print(x_direction, y_direction)
-        # canvas.move(person, 10, 0)
-
 
     canvas.bind("<Button-1>", callback)
 
@@ -104,17 +120,29 @@ def main():
     canvas.pack()
 
     while True:
-        draw_frame(canvas, person, my_map, x_direction, y_direction)
+        draw_frame(canvas, my_map, person, standing_person, left_person, right_person, x_direction, y_direction)
         time.sleep(1/50)
 
 
+"""
+def make_map(canvas):
+    map_image = Image.open(MAP_IMAGE_FILE_NAME)
+    map_image = map_image.resize((MAP_WIDTH, MAP_WIDTH), Image.ANTIALIAS)
+    map_photo = ImageTk.PhotoImage(map_image)
+    my_map = canvas.create_image(CANVAS_HEIGHT / 2, CANVAS_WIDTH / 2, image=map_photo, anchor=CENTER, state=NORMAL)
+    return my_map
+"""
+"""
+OLD PERSON: RED CIRCLE CREATOR
 def make_person(canvas, x, y):
     return canvas.create_oval(x + PERSON_WIDTH/2, y + PERSON_WIDTH/2, x - PERSON_WIDTH/2, y - PERSON_WIDTH/2, fill="red")
+"""
 
 
-def draw_frame(canvas, person, my_map, x_direction, y_direction):
+def draw_frame(canvas, my_map, person, standing_person, left_person, right_person, x_direction, y_direction):
     # TODO: stop person at border of image
     # to test if moving away from border prox limit
+    # person = update_person(standing_person, left_person, right_person, x_direction, y_direction)
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
     if person_out_of_bounds(canvas, person, x_direction, y_direction):
         print("person attempting to go out of bounds")
@@ -138,9 +166,10 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
 def is_person_in_middle(canvas, person):
     # returns true if person is in the middle, not inside any border prox limits
     # TODO: split x and y border limits,
+    print(canvas.bbox(person))
     result = False
-    if canvas.coords(person)[0] > BORDER_PROX_LIMIT and canvas.coords(person)[1] > BORDER_PROX_LIMIT and canvas.coords(person)[
-        2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.coords(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
+    if canvas.bbox(person)[0] > BORDER_PROX_LIMIT and canvas.bbox(person)[1] > BORDER_PROX_LIMIT and canvas.bbox(person)[
+        2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.bbox(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
         result = True
     return result
 
@@ -190,6 +219,18 @@ def person_out_of_bounds(canvas, person, x_direction, y_direction):
     if canvas.bbox(person)[0] < 0 or canvas.bbox(person)[1] < 0 or canvas.bbox(person)[2] > CANVAS_WIDTH or canvas.bbox(person)[3] > CANVAS_HEIGHT:
         result = True
     return result
+
+
+"""
+def update_person(standing_person, left_person, right_person, x_direction, y_direction):
+    if x_direction == -1:
+        result = left_person
+    elif x_direction == 1:
+        result = right_person
+    else:
+        result = standing_person
+    return result
+"""
 
 
 
