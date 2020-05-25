@@ -116,11 +116,10 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
     # TODO: stop person at border of image
     # to test if moving away from border prox limit
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
-    if is_person_on_edge(canvas, person) == False:
+    if is_person_in_middle(canvas, person):
         print("person was not on edge")
-    # map_in_frame(canvas, my_map, x_direction, y_direction)
-    elif map_on_edge(canvas, my_map, x_direction, y_direction) == False:
-        print("map on edge")
+    elif map_can_keep_moving(canvas, my_map, x_direction, y_direction):
+        print("map can keep moving")
         canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
         canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     else:
@@ -129,17 +128,19 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
     canvas.update()
 
 
-def is_person_on_edge(canvas, person):
+def is_person_in_middle(canvas, person):
+    # TODO: split x and y border limits,
     if canvas.coords(person)[0] > BORDER_PROX_LIMIT and canvas.coords(person)[1] > BORDER_PROX_LIMIT and canvas.coords(person)[
         2] < CANVAS_WIDTH - BORDER_PROX_LIMIT and canvas.coords(person)[3] < CANVAS_HEIGHT - BORDER_PROX_LIMIT:
-        return False
-    return True
+        return True
+    return False
 
 
 # BUGGY
-def map_on_edge(canvas, my_map, x_direction, y_direction):
-    print(canvas.bbox(my_map))
-    result = True
+def map_can_keep_moving(canvas, my_map, x_direction, y_direction):
+    #TODO: break loop, let direction determine of map moves or not
+    # print(canvas.bbox(my_map))
+    result = False
     """
     if canvas.bbox(my_map)[0] > 0:
         canvas.move(my_map, -MOVEMENT_VARIABLE, 0)
@@ -150,8 +151,22 @@ def map_on_edge(canvas, my_map, x_direction, y_direction):
     if canvas.bbox(my_map)[3] < CANVAS_HEIGHT:
         canvas.bbox(my_map, canvas.bbox(my_map)[0], canvas.bbox(my_map)[1], canvas.bbox(my_map)[2], CANVAS_HEIGHT)
     """
+    """
     if canvas.bbox(my_map)[0] < 0 and canvas.bbox(my_map)[1] < 0 and canvas.bbox(my_map)[2] > CANVAS_WIDTH and canvas.bbox(my_map)[3] > CANVAS_HEIGHT:
         result = False
+    """
+    if x_direction == -1:
+        if canvas.bbox(my_map)[0] > 0:
+            result = True
+    elif y_direction == -1:
+        if canvas.bbox(my_map)[1] > 0:
+            result = True
+    elif x_direction == 1:
+        if canvas.bbox(my_map)[2] > CANVAS_WIDTH:
+            result = True
+    elif y_direction == 1:
+        if canvas.bbox(my_map)[3] > CANVAS_HEIGHT:
+            result = True
     return result
 
 
