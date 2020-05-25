@@ -118,12 +118,15 @@ def draw_frame(canvas, person, my_map, x_direction, y_direction):
     canvas.move(person, MOVEMENT_VARIABLE * x_direction, MOVEMENT_VARIABLE * y_direction)
     if is_person_in_middle(canvas, person):
         print("person was not on edge")
-    elif map_can_keep_moving(canvas, my_map, x_direction, y_direction):
-        print("map can keep moving")
-        canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
-        canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+    elif person_crossing_prox_lim(canvas, person, x_direction, y_direction):
+        print("person crossing prox lim")
+        if map_can_keep_moving(canvas, my_map, x_direction, y_direction):
+            print("map can keep moving")
+            canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+            canvas.move(my_map, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
+        else: print("map cant keep moving")
     else:
-        print("else")
+        print("person exiting border prox lim")
         # canvas.move(person, MOVEMENT_VARIABLE * -x_direction, MOVEMENT_VARIABLE * -y_direction)
     canvas.update()
 
@@ -145,10 +148,10 @@ def map_can_keep_moving(canvas, my_map, x_direction, y_direction):
     # print(canvas.bbox(my_map))
     result = False
     if x_direction == -1:
-        if canvas.bbox(my_map)[0] > 0:
+        if canvas.bbox(my_map)[0] < 0:
             result = True
     elif y_direction == -1:
-        if canvas.bbox(my_map)[1] > 0:
+        if canvas.bbox(my_map)[1] < 0:
             result = True
     elif x_direction == 1:
         if canvas.bbox(my_map)[2] > CANVAS_WIDTH:
@@ -172,7 +175,7 @@ def person_crossing_prox_lim(canvas, person, x_direction, y_direction):
         if canvas.bbox(person)[2] >= CANVAS_WIDTH - BORDER_PROX_LIMIT:
             result = True
     elif y_direction == 1:
-        if canvas.bbox(my_map)[3] > CANVAS_HEIGHT - BORDER_PROX_LIMIT:
+        if canvas.bbox(person)[3] > CANVAS_HEIGHT - BORDER_PROX_LIMIT:
             result = True
     return result
 
